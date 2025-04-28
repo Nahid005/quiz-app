@@ -1,5 +1,11 @@
-export default function Questions() {
+import Question from "./Question";
+
+export default function Questions({questions}) {
     return(
-        <p>auestion</p>
+        <>
+            {
+                questions.map(question => <Question key={question.question} question={question} />)
+            }
+        </>
     )
 }

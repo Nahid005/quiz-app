@@ -8,21 +8,33 @@ function reducer(state, action) {
   switch(action.type) {
     case "start": 
       return {...state, status: action.type}
+    case "questions": 
+      return {...state, questions: action.payload}
   }
   
 }
 
 function App() {
   const initialState = {
+    questions: [],
     status: 'ready'
   }
-  const [{status}, dispatch] = useReducer(reducer, initialState)
+  const [{questions, status}, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
     async function getQuestion() {
-      const response = await fetch('questions.json');
-      const data = await response.json();
-      console.log(data);
+      try {
+        const response = await fetch('https://rose-adelle-46.tiiny.site/questions.json');
+        if(!response.ok) {
+          throw new Error("Server not response")
+        }
+
+        const data = await response.json();
+        dispatch({type: "questions", payload: data.questions})
+
+      } catch(error) {
+        console.log(error)
+      }
     }
 
     getQuestion();
@@ -33,7 +45,7 @@ function App() {
       <Header />
       <main>
         {status === "ready" && <StartScreen dispatch={dispatch} />}
-        {status === "start" && <Questions />}
+        {status === "start" && <Questions questions={questions} />}
       </main>
     </>
   )
